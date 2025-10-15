@@ -1,118 +1,97 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>準備開始…</title>
-  <style>
-    :root { --delaySeconds: 15; }
-    * { box-sizing: border-box; }
-    html, body {
-      height: 100%;
-      margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "Helvetica Neue", Arial;
-    }
-    .wrap {
-      min-height: 100%;
-      display: grid;
-      place-items: center;
-      padding: 16px;
-    }
-    .instructions {
-      color: white;
-      text-align: left;
-      max-width: 900px;
-      line-height: 1.6;
-      font-size: 18px;
-      margin-bottom: 20px;
-      background: rgba(0,0,0,0.6);
-      padding: 16px 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-    .frame {
-      width: 100%;
-      max-width: 1200px;
-      aspect-ratio: 16/9;
-      background: #000;
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.1);
-      box-shadow: 0 10px 30px rgba(0,0,0,.5);
-    }
-    img.hero {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      opacity: 0;
-      animation: fade .6s ease forwards;
-      background: #000;
-    }
-    @keyframes fade { to { opacity: 1 } }
-    .hud {
-      position: absolute; left: 0; right: 0; bottom: 0;
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 16px;
-      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 40%, rgba(0,0,0,.85) 100%);
-      font-size: 14px;
-    }
-    .bar { flex: 1; height: 6px; background: rgba(255,255,255,.18); border-radius: 999px; overflow: hidden; }
-    .bar > i { display: block; height: 100%; width: 0%; background: rgba(255,255,255,.9); border-radius: inherit; transition: width .1s linear; }
-    .timer { min-width: 3em; text-align: right; font-variant-numeric: tabular-nums; opacity: .9; }
-  </style>
-  <script>
-    const TARGET = "https://docs.google.com/forms/d/e/1FAIpQLSeKxaXl3azZy91k5dJNPwDKTdRl0ZHa6GBGtLXe_LoA-53hbQ/viewform?usp=header";
-    const IMAGES = ["IMG_2573.JPG", "IMG_2574.JPG", "IMG_2575.JPG", "IMG_2576.JPG"];
-    const DELAY_SECONDS = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--delaySeconds')) || 15;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructions Page</title>
+<style>
+  body {
+    margin: 0;
+    background-color: white; /* 頁面底色 */
+    font-family: "Segoe UI", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    padding: 40px 20px;
+  }
 
-    function pickRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+  .image-container {
+    width: 100%;
+    max-width: 800px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
 
-    function start() {
-      const chosen = pickRandom(IMAGES);
-      const img = document.querySelector('img.hero');
-      img.src = chosen;
+  .image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
 
-      const total = Math.max(1, Math.round(DELAY_SECONDS * 10));
-      let t = total;
-      const bar = document.querySelector('.bar i');
-      const timer = document.querySelector('.timer');
+  .instruction-box {
+    max-width: 800px;
+    background-color: #ffffff;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px 32px;
+    margin-top: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
 
-      function tick() {
-        t--;
-        const pct = 100 * (1 - t / total);
-        const remain = (t / 10).toFixed(1);
-        if (bar) bar.style.width = pct + '%';
-        if (timer) timer.textContent = remain + 's';
-        if (t > 0) setTimeout(tick, 100);
-        else window.location.href = TARGET;
+  .instruction-box p {
+    line-height: 1.7;
+    color: #333;
+    font-size: 17px;
+  }
+
+  .countdown {
+    text-align: center;
+    margin-top: 16px;
+    color: #777;
+    font-size: 15px;
+  }
+</style>
+
+<script>
+  const IMAGES = ["IMG_2573.JPG", "IMG_2574.JPG", "IMG_2575.JPG", "IMG_2576.JPG"];
+  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeKxaXl3azZy91k5dJNPwDKTdRl0ZHa6GBGtLXe_LoA-53hbQ/viewform?usp=header";
+  const DELAY = 15; // 秒
+
+  window.onload = function() {
+    const randomImage = IMAGES[Math.floor(Math.random() * IMAGES.length)];
+    document.getElementById("post-image").src = randomImage;
+
+    let timeLeft = DELAY;
+    const countdown = document.getElementById("countdown");
+    const timer = setInterval(() => {
+      timeLeft--;
+      countdown.textContent = `Redirecting to survey in ${timeLeft}s...`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        window.location.href = FORM_URL;
       }
-      if (timer) timer.textContent = (total / 10).toFixed(1) + 's';
-      setTimeout(tick, 100);
-    }
-    window.addEventListener('load', start);
-  </script>
+    }, 1000);
+  };
+</script>
 </head>
 <body>
-  <div class="wrap">
-    <div class="instructions">
-      <p><strong>Instructions</strong><br>
-      You will see one post. The endorser in the post may be a single virtual influencer or a virtual influencer appearing together with a celebrity.<br>
-      Please carefully and attentively read the post. Afterwards, based on your first impression and genuine feelings, answer a few brief questions.<br>
-      There are no right or wrong answers—please respond according to your own thoughts.<br>
-      <em>⏳ Reminder:</em> The system will automatically redirect to the survey page after 15 seconds. No action is required—please do not close or navigate away from this window.
-      </p>
-    </div>
 
-    <div class="frame">
-      <img class="hero" alt="開始前顯示圖片" />
-      <div class="hud" aria-hidden="true">
-        <div class="bar"><i></i></div>
-        <div class="timer">--</div>
-      </div>
-    </div>
+  <div class="image-container">
+    <img id="post-image" alt="Study Image">
   </div>
+
+  <div class="instruction-box">
+    <p><strong>Instructions</strong><br>
+    You will see one post. The endorser in the post may be a single virtual influencer or a virtual influencer appearing together with a celebrity.<br><br>
+    Please carefully and attentively read the post. Afterwards, based on your first impression and genuine feelings, answer a few brief questions.<br><br>
+    There are no right or wrong answers—please respond according to your own thoughts.<br><br>
+    <em>⏳ Reminder:</em> The system will automatically redirect to the survey page after 15 seconds. No action is required—please do not close or navigate away from this window.
+    </p>
+  </div>
+
+  <div class="countdown" id="countdown">Redirecting to survey in 15s...</div>
+
 </body>
 </html>
