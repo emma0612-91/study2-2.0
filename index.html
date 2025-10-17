@@ -1,105 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Scenario Introduction</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <style>
+  :root { --delay: 15; }
   * { box-sizing: border-box; }
   body {
-    margin: 0;
-    background: #fff;
-    color: #333;
+    margin: 0; background: #fff; color: #333;
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans TC", Arial;
-    padding: 32px 20px 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    padding: 32px 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 20px;
   }
-
-  .intro-box {
-    width: min(100%, 960px);
-    background: #fff;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 24px 28px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  .intro-box, .box {
+    width: min(100%, 960px); background: #fff; border: 2px solid #e6e6e6;
+    border-radius: 12px; padding: 22px 26px; box-shadow: 0 4px 12px rgba(0,0,0,.05);
   }
-  .intro-box h2 {
-    margin-top: 0;
-  }
-  .intro-box p {
-    line-height: 1.7;
-    font-size: 17px;
-    color: #333;
-  }
-
+  .intro-box h2 { margin: 0 0 8px 0; }
+  .intro-box p, .box p { line-height: 1.7; font-size: 17px; margin: .5em 0; }
   .stage {
-    width: min(100%, 960px);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 6px 16px rgba(0,0,0,.1);
-    border: 1px solid #e9e9e9;
-    background: #fafafa;
+    width: min(100%, 960px); border-radius: 14px; overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,.1); border: 1px solid #e9e9e9; background: #fafafa;
   }
-  .stage img {
-    width: 100%;
-    height: auto;
-    display: block;
+  .stage img { width: 100%; height: auto; display: block; }
+
+  .cta {
+    display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-top: 12px;
+  }
+  .count {
+    color: #666; font-size: 15px; font-variant-numeric: tabular-nums;
+  }
+  .bar {
+    grid-column: 1 / -1; height: 6px; background: #f0f0f0; border-radius: 999px; overflow: hidden;
+  }
+  .bar i {
+    display: block; height: 100%; width: 0%; background: #222; transition: width .12s linear;
   }
 
-  .box {
-    width: min(100%, 960px);
-    background: #fff;
-    border: 2px solid #e6e6e6;
-    border-radius: 12px;
-    padding: 22px 26px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+  .btn {
+    justify-self: end;
+    display: inline-block; min-width: 220px;
+    background: #0066ff; color: #fff; border: 0;
+    padding: 14px 28px; font-size: 18px; font-weight: 700; letter-spacing: .3px;
+    border-radius: 999px; cursor: pointer; box-shadow: 0 6px 20px rgba(0,102,255,.35);
+    transition: transform .06s ease, filter .2s ease, background .2s ease, opacity .2s ease;
   }
-  .box p {
-    line-height: 1.7;
-    font-size: 17px;
-    margin: .5em 0;
-  }
-
-  button {
-    margin-top: 24px;
-    background: #222;
-    color: white;
-    border: none;
-    padding: 12px 26px;
-    font-size: 17px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-  button:hover {
-    background: #444;
+  .btn:hover { filter: brightness(1.05); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] {
+    cursor: not-allowed; opacity: .45; filter: grayscale(20%);
+    background: #9fbfff; box-shadow: none;
   }
 </style>
-
 <script>
   const IMAGES = ["IMG_2573.JPG","IMG_2574.JPG","IMG_2575.JPG","IMG_2576.JPG"];
   const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeKxaXl3azZy91k5dJNPwDKTdRl0ZHa6GBGtLXe_LoA-53hbQ/viewform?usp=header";
+  const DELAY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--delay')) || 15;
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function goNext(){ window.location.href = FORM_URL; }
 
   window.addEventListener('load', () => {
-    const chosen = IMAGES[Math.floor(Math.random() * IMAGES.length)];
-    document.getElementById("hero").src = chosen;
-  });
+    // 顯示隨機圖片
+    const chosen = pick(IMAGES);
+    document.getElementById('hero').src = chosen;
 
-  function goNext() {
-    window.location.href = FORM_URL;
-  }
+    // 倒數鎖按鈕
+    const btn = document.getElementById('continueBtn');
+    const count = document.getElementById('countText');
+    const bar = document.getElementById('bar');
+
+    btn.setAttribute('disabled', 'disabled'); // 一開始不可點
+    btn.setAttribute('aria-disabled', 'true');
+    count.textContent = `Please review the post. The button will be enabled in ${DELAY.toFixed(0)}s.`;
+
+    const total = Math.max(1, Math.round(DELAY * 10)); // 0.1s 一步
+    let t = total;
+    function tick(){
+      t--;
+      const remain = (t/10).toFixed(1);
+      const pct = 1 - (t/total);
+      bar.style.width = (pct*100).toFixed(1) + '%';
+      if (t > 0) {
+        count.textContent = `Please review the post. The button will be enabled in ${remain}s.`;
+        setTimeout(tick, 100);
+      } else {
+        count.textContent = `You may proceed when ready.`;
+        btn.removeAttribute('disabled');
+        btn.setAttribute('aria-disabled', 'false');
+        btn.focus({preventScroll:true});
+      }
+    }
+    setTimeout(tick, 120);
+  });
 </script>
 </head>
-
 <body>
 
-  <!-- Scenario introduction -->
+  <!-- Scenario introduction（圖片前） -->
   <div class="intro-box">
     <h2>Scenario Introduction</h2>
     <p>Please imagine that you have recently started paying attention to healthy living and environmental issues, and you are trying to choose more eco-friendly products in your daily life. One day, while browsing social media, you come across a post about an eco-friendly shampoo, introducing a product from a fictional brand that emphasizes a refreshing wash, promotes scalp soothing and hydration, and considers environmental sustainability in both its ingredients and packaging, preventing long-term harm to the environment.</p>
@@ -107,10 +108,23 @@
 
   <!-- 圖片 -->
   <div class="stage">
-    <img id="hero" alt="Stimulus image">
+    <img id="hero" alt="Stimulus image" />
   </div>
 
-  <!-- Instructions -->
+  <!-- Instructions + 倒數 + 按鈕 -->
   <div class="box">
     <p><strong>Instructions</strong><br>
-    You will see one post. The endorser in the post may be a single virtual influencer or a virtual influencer appearing together with a celebrity.</p
+    You will see one post. The endorser in the post may be a single virtual influencer or a virtual influencer appearing together with a celebrity.</p>
+    <p>Please carefully and attentively read the post. Afterwards, based on your first impression and genuine feelings, answer a few brief questions.</p>
+    <p>There are no right or wrong answers—please respond according to your own thoughts.</p>
+    <p>⏳ Reminder: Please review the post before continuing to the survey.</p>
+
+    <div class="cta">
+      <div class="count" id="countText">Please review the post.</div>
+      <button id="continueBtn" class="btn" onclick="goNext()">Continue →</button>
+      <div class="bar"><i id="bar"></i></div>
+    </div>
+  </div>
+
+</body>
+</html>
