@@ -3,23 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Study Instructions</title>
+<title>Scenario Introduction</title>
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
 <style>
-  :root { --delay: 20; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    background: #fff; /* 白底 */
+    background: #fff;
     color: #333;
     font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans TC", Arial;
     padding: 32px 20px 40px;
-    display: grid;
-    justify-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 20px;
   }
+
+  .intro-box {
+    width: min(100%, 960px);
+    background: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .intro-box h2 {
+    margin-top: 0;
+  }
+  .intro-box p {
+    line-height: 1.7;
+    font-size: 17px;
+    color: #333;
+  }
+
   .stage {
     width: min(100%, 960px);
     border-radius: 14px;
@@ -33,34 +51,11 @@
     height: auto;
     display: block;
   }
-  .hud {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    background: #fff;
-    border-top: 1px solid #eee;
-  }
-  .bar {
-    height: 6px;
-    background: #f0f0f0;
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .bar i {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: #222;
-    transition: width .12s linear;
-  }
-  .time { font-variant-numeric: tabular-nums; color: #666; font-size: 14px; }
 
   .box {
     width: min(100%, 960px);
-    background: #fff;          /* 白色方框 */
-    border: 2px solid #e6e6e6; /* 方框邊線 */
+    background: #fff;
+    border: 2px solid #e6e6e6;
     border-radius: 12px;
     padding: 22px 26px;
     box-shadow: 0 4px 12px rgba(0,0,0,.05);
@@ -70,59 +65,52 @@
     font-size: 17px;
     margin: .5em 0;
   }
-  .muted { color: #777; }
+
+  button {
+    margin-top: 24px;
+    background: #222;
+    color: white;
+    border: none;
+    padding: 12px 26px;
+    font-size: 17px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  button:hover {
+    background: #444;
+  }
 </style>
+
 <script>
   const IMAGES = ["IMG_2573.JPG","IMG_2574.JPG","IMG_2575.JPG","IMG_2576.JPG"];
   const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeKxaXl3azZy91k5dJNPwDKTdRl0ZHa6GBGtLXe_LoA-53hbQ/viewform?usp=header";
-  const DELAY = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--delay')) || 15;
-
-  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
   window.addEventListener('load', () => {
-    const chosen = pick(IMAGES);
-    const img = document.getElementById('hero');
-    img.src = chosen;
-
-    // 倒數與進度條
-    const total = DELAY * 10; // 0.1s 一格
-    let t = total;
-    const bar = document.getElementById('bar');
-    const timeEl = document.getElementById('time');
-
-    function tick(){
-      t--;
-      const pct = 1 - (t / total);
-      const remain = (t/10).toFixed(1);
-      bar.style.width = (pct*100).toFixed(1) + '%';
-      timeEl.textContent = remain + 's';
-      if (t > 0) setTimeout(tick, 100);
-      else window.location.href = FORM_URL;
-    }
-    timeEl.textContent = (total/10).toFixed(1) + 's';
-    setTimeout(tick, 120);
+    const chosen = IMAGES[Math.floor(Math.random() * IMAGES.length)];
+    document.getElementById("hero").src = chosen;
   });
+
+  function goNext() {
+    window.location.href = FORM_URL;
+  }
 </script>
 </head>
+
 <body>
 
-  <!-- 圖片在上 -->
+  <!-- Scenario introduction -->
+  <div class="intro-box">
+    <h2>Scenario Introduction</h2>
+    <p>Please imagine that you have recently started paying attention to healthy living and environmental issues, and you are trying to choose more eco-friendly products in your daily life. One day, while browsing social media, you come across a post about an eco-friendly shampoo, introducing a product from a fictional brand that emphasizes a refreshing wash, promotes scalp soothing and hydration, and considers environmental sustainability in both its ingredients and packaging, preventing long-term harm to the environment.</p>
+  </div>
+
+  <!-- 圖片 -->
   <div class="stage">
     <img id="hero" alt="Stimulus image">
-    <div class="hud" aria-hidden="true">
-      <div class="bar"><i id="bar"></i></div>
-      <div class="time" id="time">--</div>
-    </div>
   </div>
 
-  <!-- 文字在下（白色方框） -->
+  <!-- Instructions -->
   <div class="box">
     <p><strong>Instructions</strong><br>
-    You will see one post. The endorser in the post may be a single virtual influencer or a virtual influencer appearing together with a celebrity.</p>
-    <p>Please carefully and attentively read the post. Afterwards, based on your first impression and genuine feelings, answer a few brief questions.</p>
-    <p>There are no right or wrong answers—please respond according to your own thoughts.</p>
-    <p class="muted">⏳ Reminder: The system will automatically redirect to the survey page after 20 seconds. No action is required—please do not close or navigate away from this window.</p>
-  </div>
-
-</body>
-</html>
+    You will see one post. The endorser in the post may be a single virtual influencer or a virtual influencer appearing together with a celebrity.</p
